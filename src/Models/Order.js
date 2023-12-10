@@ -1,28 +1,37 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+
+const {
+  Schema,
+  Types: { ObjectId },
+} = mongoose;
+
+const orderItemSchema = new Schema({
+  product: {
+    type: ObjectId,
+    required: true,
+    ref: "Product",
+  },
+  quantity: {
+    type: Number,
+    required: true,
+    min: 1, // Enforces a positive integer
+  },
+});
 
 const orderSchema = new Schema({
   user: {
-    type: Schema.Types.ObjectId,
+    type: ObjectId,
+    required: true,
+    ref: "User",
+  },
+  items: {
+    type: [orderItemSchema],
     required: true,
   },
-  items: [
-    {
-      product: {
-        type: Schema.Types.ObjectId,
-        required: true,
-      },
-      quantity: {
-        type: Number,
-        required: true,
-        min: 1, // Ensure positive integer quantity
-      },
-    },
-  ],
   totalAmount: {
     type: Number,
     required: true,
-    min: 0, // Ensure positive total amount
+    min: 0.0, // Enforces a positive value
   },
   shippingAddress: {
     type: String,
@@ -35,6 +44,5 @@ const orderSchema = new Schema({
   },
 });
 
-const Order = mongoose.model("Order", orderSchema);
-
+const Order = mongoose.model("orders", orderSchema);
 module.exports = Order;
